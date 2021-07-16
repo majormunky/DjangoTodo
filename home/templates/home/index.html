@@ -23,15 +23,21 @@
     const App = {
         data() {
             return {
-                todoLists: [
-                    {id: 1, "name": "Test", created_at: "2021-07-15"}
-                ]
+                todoLists: []
             }
         },
         methods: {
             onCreateNewList() {
                 console.log("Create new list!")
             }
+        },
+        created() {
+            fetch("http://127.0.0.1:8000/api/todo-list/").then((res) => {
+                return res.json();
+            }).then((data) => {
+                this.todoLists = data;
+            })
+            console.log("App Created")
         },
         compilerOptions: {
             delimiters: ['[[', ']]'],
