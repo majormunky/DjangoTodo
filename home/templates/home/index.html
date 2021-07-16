@@ -60,6 +60,7 @@
 {% block page_scripts %}
 <script src="https://unpkg.com/vue@next"></script>
 <script>
+    const csrfToken = "{{csrf_token}}";
     const App = {
         data() {
             return {
@@ -87,7 +88,7 @@
                 fetch("api/todo-list/create/", {
                     method: "POST",
                     headers: {
-                        'X-CSRFToken': "{{csrf_token}}",
+                        'X-CSRFToken': csrfToken,
                     },
                     body: data
                 }).then((res) => {
@@ -130,11 +131,30 @@
                 
             },
             onSelectTodo(todoId) {
-                for (const todo of this.selectedTodoListItems) {
-                    if (todo.id == todoId) {
-                        todo.completed = !todo.completed;
+                const formData = {completed: true, id: todoId};
+                fetch(`api/todo/update/`, {
+                    method: "PUT",
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                }).then((res) => {
+                    if (res.status >= 200 && res.status <= 299) {
+                        return res.json();
+                    } else {
+                        throw Error(res.statusText);
                     }
-                }
+                }).then((json_data) => {
+                    console.log(json_data);
+                    for (const todo of this.selectedTodoListItems) {
+                        if (todo.id == todoId) {
+                            todo.completed = !todo.completed;
+                        }
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
             },
             onCreateTodo() {
                 if (this.newTodoText == "") {
@@ -147,7 +167,7 @@
                 fetch("api/todo/create/", {
                     method: "POST",
                     headers: {
-                        'X-CSRFToken': "{{csrf_token}}",
+                        'X-CSRFToken': csrfToken,
                     },
                     body: formData
                 }).then((res) => {

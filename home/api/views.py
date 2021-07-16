@@ -9,6 +9,24 @@ from home.api import serializers
 from home import models
 
 
+class TodoUpdateAPIView(generics.UpdateAPIView):
+    def put(self, request):
+        completed = request.data.get("completed")
+        todo_id = request.data.get("id")
+
+        try:
+            todo_data = models.Todo.objects.get(pk=todo_id)
+        except models.Todo.DoesNotExist:
+            return Response(
+                "Unable to find Todo with that ID", status=status.HTTP_400_BAD_REQUEST
+            )
+
+        todo_data.completed = completed
+        todo_data.save()
+        json_data = serializers.TodoSerializer(todo_data).data
+        return Response(json_data)
+
+
 class TodoListDetailAPIView(views.APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
