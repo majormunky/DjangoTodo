@@ -8,8 +8,12 @@ def register_user(request):
         form = forms.CoreUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("/")
+            return redirect("registration-complete")
     else:
         form = forms.CoreUserCreationForm()
 
     return render(request, "core/register-user.html", {"form": form})
+
+
+def registration_complete(request):
+    return render(request, "core/registration-complete.html", {})
