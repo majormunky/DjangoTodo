@@ -33,7 +33,6 @@ class TodoListAPIView(views.APIView):
 
 class TodoListCreateAPIView(generics.CreateAPIView):
     def post(self, request):
-        print(request.POST)
         name = request.POST.get("name")
         new_todo_list = models.TodoList(name=name, user=request.user)
         try:
@@ -44,4 +43,22 @@ class TodoListCreateAPIView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         json_data = serializers.TodoListSerializer(new_todo_list).data
+        return Response(json_data)
+
+
+class TodoCreateAPIView(generics.CreateAPIView):
+    def post(self, request):
+        text = request.POST.get("text")
+        todo_list_id = request.POST.get("todo_list_id")
+        try:
+            todo_list = models.TodoList.objects.get(pk=todo_list_id)
+        except models.TodoList.DoesNotExist:
+            return Response(
+                "Unable to find todo list", status=status.HTTP_400_BAD_REQUEST
+            )
+
+        new_todo = models.Todo(todo_list=todo_list, text=text)
+        new_todo.save()
+
+        json_data = serializers.TodoSerializer(new_todo).data
         return Response(json_data)
