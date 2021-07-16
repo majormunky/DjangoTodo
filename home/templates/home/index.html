@@ -16,7 +16,7 @@
                         </a>
                     </li>
                 </ul>
-                <a href="#" @click="onCreateNewList" class="btn btn-primary btn-sm">Create New List</a>
+                <button type="button" @click="onCreateNewList" class="btn btn-primary btn-sm">Create New List</button>
             </div>
             <div class="col-lg-6" v-if="state == 'create-todo-list'">
                 <h1>Create Todo List</h1>
@@ -24,7 +24,8 @@
                     <label class="form-label">Name:</label>
                     <input class="form-control" name="todo-list-name" type="text" />
                 </div>
-                <button class="btn btn-primary btn-sm">Create</button>
+                <button @click="state = 'show-todo-lists'" type="button" class="btn btn-primary btn-sm me-2">Back</button>
+                <button type="button" class="btn btn-primary btn-sm">Create</button>
             </div>
             <div class="col-lg-6" v-if="state == 'todo-list-detail'">
                 <h1>Todo List Detail: [[selectedTodoList]]</h1>
