@@ -1,8 +1,12 @@
 # Specify filepatterns you want git to ignore.
 
+# Virtual Env Folder
 .pyv/
+
+# Local environment variables
+.env
+
+# Misc
 db.sqlite3
 *.pyc
-
-# local environment variables
-.env
+.DS_Store
