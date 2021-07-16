@@ -1,10 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Content</h1>
+<div class="container">
+    <div class="row">
+        <h1>Your Todo Lists</h1>
+        <div id="app">
+            <ul>
+                <li v-for="todoList in todoLists" :key="todoList.id">
+                    [[todoList.name]]
+                </li>
+            </ul>
+            <a href="#" @click="onCreateNewList" class="btn btn-primary btn-sm">Create New List</a>
+        </div>        
+    </div>
+</div>
+
 {% endblock %}
 
 {% block page_scripts %}
+<script src="https://unpkg.com/vue@next"></script>
+<script>
+    const App = {
+        data() {
+            return {
+                todoLists: [
+                    {id: 1, "name": "Test", created_at: "2021-07-15"}
+                ]
+            }
+        },
+        methods: {
+            onCreateNewList() {
+                console.log("Create new list!")
+            }
+        },
+        compilerOptions: {
+            delimiters: ['[[', ']]'],
+        }
+    }
+
+    Vue.createApp(App).mount('#app')
+</script>
 {% endblock %}
 
 {% block page_styles %}
