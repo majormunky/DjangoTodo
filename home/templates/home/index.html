@@ -29,10 +29,10 @@
                 <button @click="onCreateTodoList" type="button" class="btn btn-primary btn-sm">Create</button>
             </div>
             <div class="col-lg-6" v-if="state == 'todo-list-detail'">
-                <h1>Todo List Detail: [[selectedTodoListName]]</h1>
+                <h1>Todo List: [[selectedTodoListName]]</h1>
                 <ul class="list-group mb-4">
                     <li class="list-group-item" v-for="item in selectedTodoListItems" :key="item.id">
-                        <a href="#" @click='onSelectTodo(item.id)' class="d-flex list-group-item list-group-item-action">
+                        <a href="#" @click='onSelectTodo(item.id, item.completed)' class="d-flex list-group-item list-group-item-action">
                             <div class="flex-grow-1">
                                 [[item.text]]
                             </div>
@@ -130,8 +130,8 @@
                 })
                 
             },
-            onSelectTodo(todoId) {
-                const formData = {completed: true, id: todoId};
+            onSelectTodo(todoId, completedStatus) {
+                const formData = {completed: !completedStatus, id: todoId};
                 fetch(`api/todo/update/`, {
                     method: "PUT",
                     headers: {
