@@ -137,6 +137,9 @@
                 }
             },
             onCreateTodo() {
+                if (this.newTodoText == "") {
+                    return;
+                }
                 const formData = new FormData();
                 formData.append("text", this.newTodoText);
                 formData.append("todo_list_id", this.selectedTodoList);
@@ -154,6 +157,7 @@
                         throw Error(res.statusText);
                     }
                 }).then((json_data) => {
+                    this.newTodoText = "";
                     this.selectedTodoListItems.push(json_data);
                     this.state = "todo-list-detail";
                 }).catch((error) => {
