@@ -8,7 +8,7 @@
                 <h1>Your Todo Lists</h1>
                 <ul class="list-group mb-4">
                     <li class="list-group-item" v-for="todoList in todoLists" :key="todoList.id">
-                        <a href="#" class="d-flex list-group-item list-group-item-action">
+                        <a href="#" @click='onSelectTodoList(todoList.id)' class="d-flex list-group-item list-group-item-action">
                             <div class="flex-grow-1">
                                 [[todoList.name]]
                             </div>
@@ -26,6 +26,10 @@
                 </div>
                 <button class="btn btn-primary btn-sm">Create</button>
             </div>
+            <div class="col-lg-6" v-if="state == 'todo-list-detail'">
+                <h1>Todo List Detail: [[selectedTodoList]]</h1>
+                <button @click="state='show-todo-lists'" class="btn btn-primary btn-sm">Back</button>
+            </div>
         </div>        
     </div>
 </div>
@@ -39,14 +43,20 @@
         data() {
             return {
                 todoLists: [],
-                state: "show-todo-lists"
+                state: "show-todo-lists",
+                selectedTodoList: null,
             }
         },
         methods: {
             onCreateNewList() {
                 console.log("Create new list!")
                 this.state = "create-todo-list";
-            }
+            },
+            onSelectTodoList(listId) {
+                console.log(listId)
+                this.selectedTodoList = listId;
+                this.state = "todo-list-detail";
+            },
         },
         created() {
             fetch("http://127.0.0.1:8000/api/todo-list/").then((res) => {
