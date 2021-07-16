@@ -8,6 +8,9 @@ class TodoList(models.Model):
     name = models.CharField(max_length=64)
     created_at = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        unique_together = ["user", "name"]
+
 
 class Todo(models.Model):
     text = models.CharField(max_length=512)
