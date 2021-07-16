@@ -7,6 +7,20 @@ from home.api import serializers
 from home import models
 
 
+class TodoListDetailAPIView(views.APIView):
+    def get(self, request, pk):
+        try:
+            data = models.TodoList.objects.get(pk=pk)
+            todo_items = models.Todo.objects.filter(todo_list=data)
+        except models.TodoList.DoesNotExist:
+            return Response(
+                "Unable to find TodoList",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        json_data = serializers.TodoSerializer(todo_items, many=True).data
+        return Response(json_data)
+
+
 class TodoListAPIView(views.APIView):
     def get(self, request, format=None):
         """

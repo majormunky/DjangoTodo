@@ -11,3 +11,9 @@ class TodoListSerializer(serializers.ModelSerializer):
 
     def get_todo_count(self, obj):
         return obj.todo_set.count()
+
+
+class TodoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Todo
+        fields = ["id", "text", "completed"]

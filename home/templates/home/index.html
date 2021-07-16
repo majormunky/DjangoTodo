@@ -30,6 +30,16 @@
             </div>
             <div class="col-lg-6" v-if="state == 'todo-list-detail'">
                 <h1>Todo List Detail: [[selectedTodoList]]</h1>
+                <ul class="list-group mb-4">
+                    <li class="list-group-item" v-for="item in selectedTodoListItems" :key="item.id">
+                        <a href="#" @click='onSelectTodo(item.id)' class="d-flex list-group-item list-group-item-action">
+                            <div class="flex-grow-1">
+                                [[item.text]]
+                            </div>
+                            <span v-if="item.completed">C</span>
+                        </a>
+                    </li>
+                </ul>
                 <button @click="state='show-todo-lists'" class="btn btn-primary btn-sm">Back</button>
             </div>
         </div>        
@@ -49,6 +59,7 @@
                 selectedTodoList: null,
                 newTodoListName: "",
                 createError: null,
+                selectedTodoListItems: [],
             }
         },
         methods: {
@@ -84,10 +95,28 @@
                 });
             },
             onSelectTodoList(listId) {
-                console.log(listId)
+                fetch(`api/todo-list/${listId}/`).then((res) => {
+                    if (res.status >= 200 && res.status <= 299) {
+                        return res.json();
+                    } else {
+                        throw Error(res.statusText);
+                    }
+                }).then((json_data) => {
+                    this.selectedTodoListItems = json_data;
+                }).catch((error) => {
+                    console.log("ERROR FETCHING TODO")
+                    console.log(error)
+                })
                 this.selectedTodoList = listId;
                 this.state = "todo-list-detail";
             },
+            onSelectTodo(todoId) {
+                for (const todo of this.selectedTodoListItems) {
+                    if (todo.id == todoId) {
+                        todo.completed = !todo.completed;
+                    }
+                }
+            }
         },
         created() {
             fetch("api/todo-list/").then((res) => {
