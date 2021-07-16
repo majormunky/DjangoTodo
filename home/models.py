@@ -13,3 +13,4 @@ class Todo(models.Model):
     text = models.CharField(max_length=512)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
+    todo_list = models.ForeignKey(TodoList, on_delete=models.CASCADE)
