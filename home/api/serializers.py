@@ -7,7 +7,7 @@ class TodoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.TodoList
-        fields = ["name", "user", "todo_count", "created_at"]
+        fields = ["id", "name", "user", "todo_count", "created_at"]
 
     def get_todo_count(self, obj):
         return obj.todo_set.count()
