@@ -29,7 +29,7 @@
                 <button @click="onCreateTodoList" type="button" class="btn btn-primary btn-sm">Create</button>
             </div>
             <div class="col-lg-6" v-if="state == 'todo-list-detail'">
-                <h1>Todo List Detail: [[selectedTodoList]]</h1>
+                <h1>Todo List Detail: [[selectedTodoListName]]</h1>
                 <ul class="list-group mb-4">
                     <li class="list-group-item" v-for="item in selectedTodoListItems" :key="item.id">
                         <a href="#" @click='onSelectTodo(item.id)' class="d-flex list-group-item list-group-item-action">
@@ -66,6 +66,7 @@
                 todoLists: [],
                 state: "show-todo-lists",
                 selectedTodoList: null,
+                selectedTodoListName: null,
                 newTodoListName: "",
                 createError: null,
                 selectedTodoListItems: [],
@@ -105,6 +106,12 @@
                 });
             },
             onSelectTodoList(listId) {
+                let todoListName = "";
+                for (i in this.todoLists) {
+                    if (this.todoLists[i].id == listId) {
+                        todoListName = this.todoLists[i].name;
+                    }
+                }
                 fetch(`api/todo-list/${listId}/`).then((res) => {
                     if (res.status >= 200 && res.status <= 299) {
                         return res.json();
@@ -113,12 +120,14 @@
                     }
                 }).then((json_data) => {
                     this.selectedTodoListItems = json_data;
+                    this.selectedTodoList = listId;
+                    this.selectedTodoListName = todoListName;
+                    this.state = "todo-list-detail";
                 }).catch((error) => {
                     console.log("ERROR FETCHING TODO")
                     console.log(error)
                 })
-                this.selectedTodoList = listId;
-                this.state = "todo-list-detail";
+                
             },
             onSelectTodo(todoId) {
                 for (const todo of this.selectedTodoListItems) {
