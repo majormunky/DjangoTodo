@@ -16,16 +16,16 @@
                         </a>
                     </li>
                 </ul>
-                <button type="button" @click="onCreateNewList" class="btn btn-primary btn-sm">Create New List</button>
+                <button type="button" @click="state = 'create-todo-list'" class="btn btn-primary btn-sm">Create New List</button>
             </div>
             <div class="col-lg-6" v-if="state == 'create-todo-list'">
                 <h1>Create Todo List</h1>
                 <div class="mb-3">
                     <label class="form-label">Name:</label>
-                    <input class="form-control" name="todo-list-name" type="text" />
+                    <input v-model="newTodoListName" class="form-control" name="todo-list-name" type="text" />
                 </div>
                 <button @click="state = 'show-todo-lists'" type="button" class="btn btn-primary btn-sm me-2">Back</button>
-                <button type="button" class="btn btn-primary btn-sm">Create</button>
+                <button @click="onCreateTodoList" type="button" class="btn btn-primary btn-sm">Create</button>
             </div>
             <div class="col-lg-6" v-if="state == 'todo-list-detail'">
                 <h1>Todo List Detail: [[selectedTodoList]]</h1>
@@ -46,12 +46,32 @@
                 todoLists: [],
                 state: "show-todo-lists",
                 selectedTodoList: null,
+                newTodoListName: "",
             }
         },
         methods: {
-            onCreateNewList() {
+            onCreateTodoList() {
                 console.log("Create new list!")
-                this.state = "create-todo-list";
+                if (this.newTodoListName == "") {
+                    console.log("Empty todo name!")
+                    return;
+                }
+
+                const data = new FormData();
+                data.append("name", this.newTodoListName);
+
+                fetch("api/todo-list/create/", {
+                    method: "POST",
+                    headers: {
+                        'X-CSRFToken': "{{csrf_token}}",
+                    },
+                    body: data
+                }).then((res) => {
+                    return res.json();
+                }).then((json_data) => {
+                    this.todoLists.push(json_data)
+                    this.state = "show-todo-lists";
+                });
             },
             onSelectTodoList(listId) {
                 console.log(listId)
@@ -60,7 +80,7 @@
             },
         },
         created() {
-            fetch("http://127.0.0.1:8000/api/todo-list/").then((res) => {
+            fetch("api/todo-list/").then((res) => {
                 return res.json();
             }).then((data) => {
                 this.todoLists = data;
