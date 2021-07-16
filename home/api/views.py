@@ -1,6 +1,8 @@
 from rest_framework import views
 from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework import status
+from django.db import IntegrityError
 from home.api import serializers
 from home import models
 
@@ -20,6 +22,12 @@ class TodoListCreateAPIView(generics.CreateAPIView):
         print(request.POST)
         name = request.POST.get("name")
         new_todo_list = models.TodoList(name=name, user=request.user)
-        new_todo_list.save()
+        try:
+            new_todo_list.save()
+        except IntegrityError:
+            return Response(
+                "Unable to create Todo List, there is already one with that name",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         json_data = serializers.TodoListSerializer(new_todo_list).data
         return Response(json_data)

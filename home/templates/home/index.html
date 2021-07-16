@@ -24,6 +24,7 @@
                     <label class="form-label">Name:</label>
                     <input v-model="newTodoListName" class="form-control" name="todo-list-name" type="text" />
                 </div>
+                <div class="text-danger text-bold mb-4" v-if="createError">[[createError]]</div>
                 <button @click="state = 'show-todo-lists'" type="button" class="btn btn-primary btn-sm me-2">Back</button>
                 <button @click="onCreateTodoList" type="button" class="btn btn-primary btn-sm">Create</button>
             </div>
@@ -47,6 +48,7 @@
                 state: "show-todo-lists",
                 selectedTodoList: null,
                 newTodoListName: "",
+                createError: null,
             }
         },
         methods: {
@@ -67,10 +69,18 @@
                     },
                     body: data
                 }).then((res) => {
-                    return res.json();
+                    if (res.status >= 200 && res.status <= 299) {
+                        return res.json();
+                    } else {
+                        throw Error(res.statusText);
+                    }
                 }).then((json_data) => {
+                    console.log("in json data part")
                     this.todoLists.push(json_data)
                     this.state = "show-todo-lists";
+                }).catch((error) => {
+                    console.log("ERROR");
+                    this.createError = "Error: Unable to create todo";
                 });
             },
             onSelectTodoList(listId) {
