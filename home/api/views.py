@@ -1,3 +1,5 @@
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import views
 from rest_framework import generics
 from rest_framework.response import Response
@@ -8,6 +10,9 @@ from home import models
 
 
 class TodoListDetailAPIView(views.APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         try:
             data = models.TodoList.objects.get(pk=pk)
@@ -22,6 +27,9 @@ class TodoListDetailAPIView(views.APIView):
 
 
 class TodoListAPIView(views.APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
         """
         Return a list of all users.
@@ -32,6 +40,9 @@ class TodoListAPIView(views.APIView):
 
 
 class TodoListCreateAPIView(generics.CreateAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         name = request.POST.get("name")
         new_todo_list = models.TodoList(name=name, user=request.user)
@@ -47,6 +58,9 @@ class TodoListCreateAPIView(generics.CreateAPIView):
 
 
 class TodoCreateAPIView(generics.CreateAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         text = request.POST.get("text")
         todo_list_id = request.POST.get("todo_list_id")
