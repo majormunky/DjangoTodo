@@ -9,5 +9,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         demo_account = get_user_model().objects.filter(email="demo@example.com")
         if demo_account:
-            todo_list = models.Todo.objects.filter(user=demo_account.first())
+            todo_list = models.TodoList.objects.filter(user=demo_account.first())
             todo_list.delete()
